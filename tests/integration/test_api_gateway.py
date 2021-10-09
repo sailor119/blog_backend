@@ -61,7 +61,7 @@ class TestApiGateway(TestCase):
             data = {
                 'visitType': visitType,
                 'info': {
-                    'lastUpdateTime': now
+                    'now': now
                 }
             }
             response = requests.put(self.api_endpoint.format(visitType=visitType), json=data)
