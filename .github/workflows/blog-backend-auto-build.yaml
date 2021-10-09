@@ -4,7 +4,7 @@ jobs:
   run-python-code-unit-test:
     runs-on: ubuntu-latest
     env:
-      AWS_SAM_STACK_NAME: blog
+      AWS_SAM_STACK_NAME: blog #stack name
       AWS_ACCESS_KEY_ID: ${{ secrets.ACCESSID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRETKEY }}
     steps:
@@ -41,5 +41,5 @@ jobs:
       - name: deploy sam template to CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: blog
+          name: blog #stack name
           template: packaged.yaml
