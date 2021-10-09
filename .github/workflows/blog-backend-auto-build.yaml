@@ -41,5 +41,5 @@ jobs:
       - name: deploy sam template to CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: junshenBlog
+          name: blog
           template: packaged.yaml
