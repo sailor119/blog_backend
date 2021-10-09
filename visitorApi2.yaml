@@ -1,0 +1,28 @@
+openapi: "3.0.1"
+info:
+  title: "visitorApi2"
+  version: "2021-09-25 16:22:55UTC"
+paths:
+  /visitors/{visitType}:
+    get:
+      responses:
+        default:
+          description: "Default response for GET /visitors/{visitType}"
+    put:
+      responses:
+        default:
+          description: "Default response for PUT /visitors/{visitType}"
+x-amazon-apigateway-cors:
+  allowMethods:
+  - "GET"
+  - "OPTIONS"
+  - "PUT"
+  allowHeaders:
+  - "content-type"
+  maxAge: 0
+  allowCredentials: false
+  allowOrigins:
+  - "http://192.168.12.140"
+  - "http://192.168.38.128"
+  - "https://www.51junshen.com"
+x-amazon-apigateway-importexport-version: "1.0"

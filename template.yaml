@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  blog
+  junshen's resume blog
+
+# Global variables
+Globals:
+  Function:
+    Timeout: 30
+
+Resources:
+  # 创建所需的httpapi网关接口
+  visitorApi2:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+#      AccessLogSettings:
+#        DestinationArn: !GetAtt AccessLogs.Arn
+#        Format: $context.requestId
+#      DefinitionUri:
+#        Bucket: 51junshen-backend
+#        Key: visitorApi2.yaml
+      DefinitionBody:
+        openapi: "3.0.1"
+        info:
+          title: "visitorApi2"
+          version: "1.0.0"
+        paths:
+          /visitors/{visitType}:
+            get:
+              resources:
+                default:
+                  description: "Default response for GET /visitors/{visitType}"
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: "2.0"
+                type: "aws_proxy"
+                httpMethod: "POST"
+                uri: !GetAtt dynamodbPyOperator.Arn
+                connectionType: "INTERNET"
+            put:
+              resources:
+                default:
+                  description: "Default response for GET /visitors/{visitType}"
+              x-amazon-apigateway-integration:
+                payloadFormatVersion: "2.0"
+                type: "aws_proxy"
+                httpMethod: "POST"
+                uri: !GetAtt dynamodbPyOperator.Arn
+                connectionType: "INTERNET"
+        x-amazon-apigateway-cors:
+          allowMethods:
+            - "GET"
+            - "PUT"
+            - "OPTIONS"
+          allowHeaders:
+            - "content-type"
+          maxAge: 0
+          allowCredentials: false
+          allowOrigins:
+            - "https://www.51junshen.com"
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 500
+        ThrottlingRateLimit: 500
+      RouteSettings:
+        "GET /visitors/{visitType}":
+          ThrottlingBurstLimit: 500
+          ThrottlingRateLimit: 500
+        "PUT /visitors/{visitType}":
+          ThrottlingBurstLimit: 500
+          ThrottlingRateLimit: 500
+
+  # 创建所需的lambda fcuntion: dynamodbPyOperator2
+  dynamodbPyOperator:
+    Type: AWS::Serverless::Function 
+    Properties:
+      FunctionName: dynamodbPyOperator2
+      CodeUri: dynamodbPyOperator/
+      Handler: app.lambda_handler
+      Runtime: python3.9
+      Role: arn:aws:iam::189956633909:role/service-role/dynamodbRole
+      Events:
+        visitorApi2:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref visitorApi2
+
+  # 创建所需的dynamodb table
+  dynamodb:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: visitType
+        Type: String
+      TableName: visitors
+
+Outputs:
+  visitorApi2:
+    Description: "API Gateway endpoint URL for $default stage for dynamodbPyOperator function"
+    Value: !Sub "https://${visitorApi2}.execute-api.${AWS::Region}.amazonaws.com/visitors/{visitType}"
+  dynamodbPyOperator:
+    Description: "dynamodbPyOperator Lambda Function ARN"
+    Value: !GetAtt dynamodbPyOperator.Arn
+  dynamodb:
+    Description: "the table use to store visitors information"
+    Value: !Ref dynamodb

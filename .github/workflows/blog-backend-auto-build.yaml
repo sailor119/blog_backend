@@ -1,0 +1,45 @@
+name: blog-backend-auto-build
+on: [push]
+jobs:
+  run-python-code-unit-test:
+    runs-on: ubuntu-latest
+    env:
+      AWS_SAM_STACK_NAME: junshenBlog
+      AWS_ACCESS_KEY_ID: ${{ secrets.ACCESSID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SECRETKEY }}
+    steps:
+      # run python unit test scripts to test lambda function
+      - uses: actions/checkout@v2
+      - name: Setup python 3.8 envirnment
+        uses: actions/setup-python@v2 
+        with:
+          python-version: '3.8'
+      - name: Install dependencies.
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r dynamodbPyOperator/requirements.txt
+          pip install -r tests/requirements.txt
+      - run: |
+          pytest
+  Configure-credential-and-deploy:
+    runs-on: ubuntu-latest
+    needs: run-python-code-unit-test
+    steps:
+      - name: Checkout Backend Code
+        uses: actions/checkout@v2
+      - name: Configure AWS credentials for backend
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESSID }}
+          aws-secret-access-key: ${{ secrets.SECRETKEY }}
+          aws-region: us-east-1
+      - name: Set sam command
+        uses: aws-actions/setup-sam@v1
+      - name: Pacakge junshenBlog backend
+        run: |
+          sam package --template-file template.yaml --output-template-file packaged.yaml --s3-bucket 51junshenbackend
+      - name: deploy sam template to CloudFormation
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: junshenBlog
+          template: packaged.yaml
