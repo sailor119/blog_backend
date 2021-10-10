@@ -76,7 +76,7 @@ Resources:
       FunctionName: dynamodbPyOperator2
       CodeUri: dynamodbPyOperator/
       Handler: app.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.8
       Role: arn:aws:iam::189956633909:role/service-role/dynamodbRole
       Events:
         visitorApi2:
