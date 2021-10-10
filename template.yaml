@@ -57,7 +57,7 @@ Resources:
           maxAge: 0
           allowCredentials: false
           allowOrigins:
-            - "https://www.51junshen.com"
+            - "https://blog.51junshen.com"
       DefaultRouteSettings:
         ThrottlingBurstLimit: 500
         ThrottlingRateLimit: 500
