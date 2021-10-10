@@ -56,6 +56,7 @@ class TestApiGateway(TestCase):
         for visitType in ['pv', 'uv']:
             now = datetime.now(tz=timezone.utc).strftime('%a, %b %d %y %H:%M:%S GMT')
             response = requests.get(self.api_endpoint.format(visitType=visitType))
+            print(response.json())
             self.assertIsInstance(response.json(), dict)
             self.assertIn('Item', response.json().keys())
             data = {
